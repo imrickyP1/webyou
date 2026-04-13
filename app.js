@@ -1,9 +1,13 @@
 // ============================================================
 // Nexus Shop — Frontend API Client
-// Backend: FastAPI on http://localhost:8000
+// Backend: FastAPI (auto-detects local vs deployed)
 // ============================================================
 
-const API_BASE = 'http://localhost:8000/api';
+// When served from the same FastAPI server, use relative path.
+// When on GitHub Pages, point to your Render backend URL.
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8000/api'
+    : 'https://nexus-shop-api.onrender.com/api';
 
 // --- Global State ---
 const state = {

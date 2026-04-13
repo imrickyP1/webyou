@@ -22,7 +22,11 @@ app = FastAPI(title="Nexus Shop API", version="1.0.0")
 # Allow frontend at same origin (and localhost dev)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+        "https://imrickyp1.github.io",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
