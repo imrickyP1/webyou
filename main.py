@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, HTMLResponse
+from contextlib import asynccontextmanager
 import os
 
 from backend.database import engine, Base
@@ -10,14 +11,20 @@ from backend.routes import auth, products, orders
 from backend.seed import seed_products, seed_admin
 
 
-# Create all tables
-Base.metadata.create_all(bind=engine)
+@asynccontextmanager
+async def lifespan(app):
+    # Create all tables and seed on startup
+    try:
+        Base.metadata.create_all(bind=engine)
+        seed_admin()
+        seed_products()
+        print("[OK] Database initialized and seeded.")
+    except Exception as e:
+        print(f"[WARN] Database init error (will retry on first request): {e}")
+    yield
 
-# Seed default admin and sample products on first run
-seed_admin()
-seed_products()
 
-app = FastAPI(title="Nexus Shop API", version="1.0.0")
+app = FastAPI(title="Nexus Shop API", version="1.0.0", lifespan=lifespan)
 
 # Allow frontend at same origin (and localhost dev)
 app.add_middleware(
@@ -26,6 +33,7 @@ app.add_middleware(
         "http://localhost:8000",
         "http://127.0.0.1:8000",
         "https://imrickyp1.github.io",
+        "https://nexus-shop-api.onrender.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
