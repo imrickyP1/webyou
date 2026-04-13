@@ -4,8 +4,8 @@
 // ============================================================
 
 // When served from the same FastAPI server, use relative path.
-// When on GitHub Pages, point to your Render backend URL.
-const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+// When on GitHub Pages or custom domain, point to your Render backend URL.
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000/api'
     : 'https://nexus-shop-api.onrender.com/api';
 
